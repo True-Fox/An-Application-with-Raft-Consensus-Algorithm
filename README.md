@@ -33,7 +33,6 @@
 
 5) Start the developement server and go to http://localhost:5000/home.
     ```sh
-    > FLASK_APP=app.py
     > flask run
     ```
 
