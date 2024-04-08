@@ -20,9 +20,21 @@
     ```sh
     > pip install -r requirements.txt
     ```
-3) Start the developement server and go to http://localhost:5000/home.
+3) Create a new database in MySQL and make sure you change the values in the app.py file.
+    ```py
+    connection = mysql.connector.connect(
+    host="localhost",
+    user=<Username>,
+    password=<Password>,
+    database=<database_name>
+    )
+    ```
+4) To set up the database, please use the source sql file from docs folder.
+
+5) Start the developement server and go to http://localhost:5000/home.
     ```sh
     > FLASK_APP=app.py
     > flask run
     ```
-4) Have fun!
+
+6) Have fun!
