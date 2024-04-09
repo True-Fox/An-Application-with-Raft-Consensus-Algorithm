@@ -68,7 +68,7 @@ def logout():
 
 @app.route('/home')
 def home():
-    if session['username']:
+    if session:
         return render_template("index.html", username=session['username'])
     else:
         return render_template("login.html")
