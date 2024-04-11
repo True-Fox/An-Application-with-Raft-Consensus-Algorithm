@@ -10,6 +10,7 @@ load_dotenv()
 
 app = Flask(__name__)
 
+app.secret_key = "s3cr34_14_5335MS"
 app.config['MYSQL_HOST'] = os.getenv('MYSQL_HOST')
 app.config['MYSQL_USER'] = os.getenv('MYSQL_USER')
 app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD')
