@@ -1,3 +1,4 @@
 task-mgmt/
 .vscode
 __pycache__
+.env
