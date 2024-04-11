@@ -64,13 +64,13 @@ def register():
             return render_template("login.html")
     return render_template('register.html', msg='')
 
-@app.route('/login/logout')
+@app.route('/logout', methods=['POST'])
 def logout():
-    session.pop('loggedin', None)
-    session.pop('id', None)
-    session.pop('username', None)
+    if session.get('loggedin'):
+        session.clear()
     return redirect(url_for('login'))
 
+@app.route('/')
 @app.route('/home')
 def home():
     if session.get('loggedin'):
@@ -79,7 +79,7 @@ def home():
         projects = cursor.fetchall()
         return render_template("index.html", username=session['username'], projects=projects)
     else:
-        return url_for('login')
+        return redirect(url_for('login'))
 
 @app.route("/tasks/<int:project_id>")
 def tasks(project_id):
@@ -87,7 +87,7 @@ def tasks(project_id):
         # To be filled
         return render_template("tasks.html")
     else:
-        return render_template("login.html")
+        return redirect(url_for('login'))
     
 @app.route("/add_project", methods=["POST", "GET"])
 def add_project():
@@ -100,12 +100,10 @@ def add_project():
             end_date = request.form["end_date"]
             status = request.form["status"]
             
-            # Convert start_date and end_date strings to datetime objects
             start_date_obj = datetime.strptime(start_date, "%Y-%m-%d")
             end_date_obj = datetime.strptime(end_date, "%Y-%m-%d")
             current_date = datetime.now()
             
-            # Check if start date is not equal to current date and start date is greater than end date
             if start_date_obj <= end_date_obj:
                 id = random.randint(1, 100)
                 cursor = mysql.connection.cursor()
@@ -119,6 +117,16 @@ def add_project():
             return render_template("add_project.html", msg = '')
     else:
         return redirect(url_for('login'))
+
+@app.route('/delete_project/<int:project_id>', methods=['POST'])
+def delete_project(project_id):
+    if session.get('loggedin'):
+        cursor = mysql.connection.cursor()
+        cursor.execute("DELETE FROM Projects WHERE project_id = %s", (project_id,))
+        mysql.connection.commit()
+    else:
+        return redirect(url_for('login'))
+    return redirect(url_for('home'))
 
 if __name__ == "__main__":
     app.run(debug=True)
