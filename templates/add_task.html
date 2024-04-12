@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Add Task{% endblock %}
+{% block content %}
+<div class="container mx-auto py-8">
+    <h1 class="text-2xl font-bold mb-4">Add New Task</h1>
+    <form method="POST" action="{{ url_for('add_task', project_id=project_id) }}">
+        <div class="mb-4">
+            <label for="task_name" class="block font-bold mb-2">Task Name:</label>
+            <input type="text" name="task_name" id="task_name" class="border rounded py-2 px-3 w-full" required>
+        </div>
+        <div class="mb-4">
+            <label for="task_description" class="block font-bold mb-2">Task Description:</label>
+            <textarea name="task_description" id="task_description" class="border rounded py-2 px-3 w-full" rows="3"></textarea>
+        </div>
+        <div class="mb-4">
+            <label for="due_date" class="block font-bold mb-2">Due Date:</label>
+            <input type="date" name="due_date" id="due_date" class="border rounded py-2 px-3 w-full" required>
+        </div>
+        <div class="mb-4">
+            <label for="priority" class="block font-bold mb-2">Priority:</label>
+            <select name="priority" id="priority" class="border rounded py-2 px-3 w-full" required>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+            </select>
+        </div>
+        <div class="mb-4">
+            <label for="status" class="block font-bold mb-2">Status:</label>
+            <select name="status" id="status" class="border rounded py-2 px-3 w-full" required>
+                <option value="pending">Pending</option>
+                <option value="in progress">In Progress</option>
+                <option value="in review">In Review</option>
+                <option value="completed">Completed</option>
+            </select>
+        </div>
+        <div class="mb-4">
+            <label for="assigned_to" class="block font-bold mb-2">Assigned To:</label>
+            <select name="assigned_to" id="assigned_to" class="border rounded py-2 px-3 w-full" required>
+                {% for user in users %}
+                <option value="{{ user.user_id }}">{{ user.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add Task</button>
+    </form>
+</div>
+{% endblock %}

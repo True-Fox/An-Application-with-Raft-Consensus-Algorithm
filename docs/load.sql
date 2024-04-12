@@ -16,7 +16,7 @@ CREATE TABLE Projects (
 );
 
 CREATE TABLE Tasks (
-    task_id INT PRIMARY KEY,
+    task_id INT AUTO_INCREMENT PRIMARY KEY,
     project_id INT,
     task_name VARCHAR(255) NOT NULL,
     task_description TEXT,
