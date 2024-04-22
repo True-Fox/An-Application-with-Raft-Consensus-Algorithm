@@ -18,6 +18,7 @@ app.config['MYSQL_DB'] = os.getenv('MYSQL_DB')
 
 mysql = MySQL(app=app)
 
+
 @app.route('/login/', methods=['GET','POST'])
 def login():
     msg=''

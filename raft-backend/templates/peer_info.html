@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peers Information</title>
+</head>
+<body>
+    <h1>Peers Information</h1>
+    <ul>
+        {% for peer in peers %}
+        <li>Peer ID: {{ peer.id }}, State: {{ peer.state }}</li>
+        {% endfor %}
+    </ul>
+    <p>Server is running! Node ID: {{ node.state }}</p>
+</body>
+</html>
