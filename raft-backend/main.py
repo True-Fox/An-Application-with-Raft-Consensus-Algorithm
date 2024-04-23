@@ -63,15 +63,25 @@ def index():
 @app.route('/api/post', methods=['POST'])
 def post():
     data = request.get_json()
+    print("This is the data recieved: ")
+    print(data)
     query = data['query']
-    data = tuple(data.values())
+    data_t = tuple(data.values())
     print("Query: ", query)
-    print("Data:",data[1:] )
+    print("Data:",data_t[1:] )
     if node.state == 'l':
-        doPost(query,data[1:])
+        doPost(query,data_t[1:])
         return "Success"
     else:
         print(node.get_peers())
+        for id, raft_node in node.get_peers().items():
+            print("Id is {}, state: {}".format(id, raft_node.state))
+            if raft_node.state == 'l':
+                url = "http://localhost:" + str(5000+int(id))+"/api/post"
+                print(data)
+                response = requests.post(url=url, json=data)
+                print("Response from leader: ", response)
+                return "Success"
         return "Node is not a leader, forward the request to leader"
 
 @app.route('/api/get', methods=['GET'])
