@@ -23,16 +23,18 @@ conn = connection.MySQLConnection(
 )
 
 def doPost(query:str, args:tuple):
-    cursor = conn.cursor()
+    cursor = conn.cursor(buffered=True)
     cursor.execute(query,args)
     
     conn.commit()
     cursor.close()
 
-def doGet(query:str, args:tuple):
-    cursor = conn.cursor()
+def doGet(query:str, fetch_status: str, args:tuple):
+    cursor = conn.cursor(buffered=True)
     cursor.execute(query, args)
-    return cursor.fetchone()
+    if (fetch_status == "one"):
+        return cursor.fetchone()
+    return cursor.fetchall()
     
 
 def start_server(node):
@@ -76,10 +78,11 @@ def post():
 def get():
     data = request.get_json()
     query = data['query']
+    fetch_status = data['fetch_status']
     data_t = tuple(data.values())
-    print(f"Query: {query} \n Data: {data_t[1:]}")
+    print(f"Query: {query} \n Data: {data_t[2:]}")
     if node.state == "l":
-        res = doGet(query, data_t[1:])
+        res = doGet(query, fetch_status, data_t[2:])
         print(res)
         if res:
             return jsonify(res)
@@ -92,8 +95,8 @@ def get():
                 url = "http://localhost:" + str(5000+int(id))+"/api/get"
                 print(data)
                 response = requests.get(url=url, json=data)
-                print("Response from leader: ",response.text)
-                
+                print("Response from leader: ", response.text)
+                return response.json()
         return "This node is not a leader.. forwarding request to leader node"
 
 node.worker.handler['on_leader'] = check_lead
