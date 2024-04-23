@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from flask_mysqldb import MySQL
 from datetime import datetime
 import MySQLdb.cursors
-import re, random
+import re, random, requests
 import os
 from dotenv import load_dotenv
 
@@ -11,12 +11,12 @@ load_dotenv()
 app = Flask(__name__)
 
 app.secret_key = "s3cr34_14_5335MS"
-app.config['MYSQL_HOST'] = os.getenv('MYSQL_HOST')
-app.config['MYSQL_USER'] = os.getenv('MYSQL_USER')
-app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD')
-app.config['MYSQL_DB'] = os.getenv('MYSQL_DB')
+# app.config['MYSQL_HOST'] = os.getenv('MYSQL_HOST')
+# app.config['MYSQL_USER'] = os.getenv('MYSQL_USER')
+# app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD')
+# app.config['MYSQL_DB'] = os.getenv('MYSQL_DB')
 
-mysql = MySQL(app=app)
+# mysql = MySQL(app=app)
 
 
 @app.route('/login/', methods=['GET','POST'])
@@ -25,13 +25,21 @@ def login():
     if request.method=='POST':
         username = request.form['username']
         password = request.form['password']
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute("SELECT * FROM users WHERE username=%s AND password=%s",(username,password))
-        account = cursor.fetchone()
+        # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        # cursor.execute("SELECT * FROM users WHERE username=%s AND password=%s",(username,password))
+        # account = cursor.fetchone()
+        data = dict()
+        data['query'] = "SELECT * FROM users WHERE username=%s AND password=%s"
+        data['fetch_status'] = "one"
+        data['username'] = username
+        data['password'] = password
+        url = "http://localhost:5003/api/get"
+        account = requests.get(url=url, json=data).json()
+        # print("type: ", type(account), "Content:", account)
         if account:
             session['loggedin'] = True
-            session['id']=account['user_id']
-            session['username']=account['username']
+            session['id']=account[0]
+            session['username']=account[1]
             return redirect(url_for('home'))
         else:
             msg = 'Incorrect username/password'

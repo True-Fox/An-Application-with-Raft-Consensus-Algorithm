@@ -63,24 +63,24 @@ def index():
 @app.route('/api/post', methods=['POST'])
 def post():
     data = request.get_json()
-    print("This is the data recieved: ")
-    print(data)
+    # print("This is the data recieved: ")
+    # print(data)
     query = data['query']
     data_t = tuple(data.values())
-    print("Query: ", query)
-    print("Data:",data_t[1:] )
+    # print("Query: ", query)
+    # print("Data:",data_t[1:] )
     if node.state == 'l':
         doPost(query,data_t[1:])
         return "Success"
     else:
-        print(node.get_peers())
+        # print(node.get_peers())
         for id, raft_node in node.get_peers().items():
-            print("Id is {}, state: {}".format(id, raft_node.state))
+            # print("Id is {}, state: {}".format(id, raft_node.state))
             if raft_node.state == 'l':
                 url = "http://localhost:" + str(5000+int(id))+"/api/post"
-                print(data)
+                # print(data)
                 response = requests.post(url=url, json=data)
-                print("Response from leader: ", response)
+                # print("Response from leader: ", response)
                 return "Success"
         return "Node is not a leader, forward the request to leader"
 
@@ -90,23 +90,25 @@ def get():
     query = data['query']
     fetch_status = data['fetch_status']
     data_t = tuple(data.values())
-    print(f"Query: {query} \n Data: {data_t[2:]}")
+    # print(f"Query: {query} \n Data: {data_t[2:]}")
     if node.state == "l":
         res = doGet(query, fetch_status, data_t[2:])
-        print(res)
+        # print(res)
         if res:
             return jsonify(res)
         return "No Data Available", 500
     else:
-        print(node.get_peers())
+        # print(node.get_peers())
         for id, raft_node in node.get_peers().items():
-            print("Id is {}, state: {}".format(id, raft_node.state))
+            # print("Id is {}, state: {}".format(id, raft_node.state))
             if raft_node.state == 'l':
                 url = "http://localhost:" + str(5000+int(id))+"/api/get"
-                print(data)
+                # print(data)
                 response = requests.get(url=url, json=data)
-                print("Response from leader: ", response.text)
-                return response.json()
+                # # print("Response from leader: ", response.text)
+                response_data = response.json()
+                response_tuple = (response_data, 200)
+                return response_tuple
         return "This node is not a leader.. forwarding request to leader node"
 
 node.worker.handler['on_leader'] = check_lead
