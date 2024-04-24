@@ -116,14 +116,19 @@ def tasks(project_id):
         data['project_id'] = str(project_id)
         id = random.randint(1, 3)
         url = "http://localhost:" + str(5000+int(id))+"/api/get"
-        tasks = requests.get(url=url, json=data).json()
+        tasks = requests.get(url=url, json=data)
 
-        pending_tasks = [task for task in tasks if task[6] == 'pending']
-        in_progress_tasks = [task for task in tasks if task[6] == 'in progress']
-        in_review_tasks = [task for task in tasks if task[6] == 'in review']
-        completed_tasks = [task for task in tasks if task[6] == 'completed']
+        if tasks.status_code == 200:
+            tasks = tasks.json()
 
-        return render_template("tasks.html", project_id=project_id, pending_tasks=pending_tasks, in_progress_tasks=in_progress_tasks, in_review_tasks=in_review_tasks, completed_tasks=completed_tasks)
+            pending_tasks = [task for task in tasks if task[6] == 'pending']
+            in_progress_tasks = [task for task in tasks if task[6] == 'in progress']
+            in_review_tasks = [task for task in tasks if task[6] == 'in review']
+            completed_tasks = [task for task in tasks if task[6] == 'completed']
+
+            return render_template("tasks.html", project_id=project_id, pending_tasks=pending_tasks, in_progress_tasks=in_progress_tasks, in_review_tasks=in_review_tasks, completed_tasks=completed_tasks)
+        else:
+            return render_template("tasks.html", project_id=project_id, pending_tasks=[], in_progress_tasks=[], in_review_tasks=[], completed_tasks=[])
     else:
         return redirect(url_for('login'))
     
