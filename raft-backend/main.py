@@ -44,6 +44,42 @@ logging.basicConfig(filename=f'logs/node_{node.nid}.log',
                 filemode='w')
 logger = logging.getLogger()
 
+logs_folder = 'logs'
+
+def log_file_traverse(logs_folder, conn):
+    for log_file in os.listdir(logs_folder):
+        if log_file.endswith(".log"):
+            log_path = os.path.join(logs_folder, log_file)
+            cursor = conn.cursor()
+            with open(log_path, 'r') as log:
+                queries = extract_queries_from_log(log)
+                for query in queries:
+                    try:
+                        cursor.execute(query)
+                    except Exception as e:
+                        print(f"Error executing query: {query}\nError: {e}")
+            conn.commit()
+            cursor.close()
+
+def extract_queries_from_log(log_file):
+    queries = []
+    current_query = ''
+    for line in log_file:
+        if line.startswith("Query:"):
+            current_query = line.lstrip("Query:").strip()
+        elif line.strip(): 
+            current_query += line.strip()
+        else: 
+            if current_query:
+                queries.append(current_query)
+                current_query = ''
+    return queries
+
+logs_folder = 'logs' 
+log_file_traverse(logs_folder, conn) 
+
+
+
 def start_server(node):
     app.run(host="localhost", port = 5000 + int(node.nid))
 
