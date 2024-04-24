@@ -8,17 +8,17 @@
     <a href="/add_project" class="bg-blue-500 text-white font-bold py-2 px-4 rounded mb-4 inline-block">Add Project</a>
     <div class="space-y-4">
         {% for project in projects %}
-        <a href="/tasks/{{ project.project_id }}" class="block mb-4">
+        <a href="/tasks/{{ project[0] }}" class="block mb-4">
             <div class="bg-[#f0e6d7] rounded-lg shadow-md flex justify-between p-4">
                 <div>
-                <h2 class="text-2xl font-semibold mb-2 text-[#4a3e25]">{{ project.project_name }}</h2>
-                <p class="text-gray-700 mb-4">{{ project.project_description }}</p>
+                <h2 class="text-2xl font-semibold mb-2 text-[#4a3e25]">{{ project[1] }}</h2>
+                <p class="text-gray-700 mb-4">{{ project[2] }}</p>
                 <div class="border-t border-gray-300 pt-2">
-                    <p class="text-gray-500">Start Date: {{ project.start_date }} | End Date: {{ project.end_date }}</p>
-                    <p class="text-gray-500">Status: {{ project.status }}</p>
+                    <p class="text-gray-500">Start Date: {{ project[3] }} | End Date: {{ project[4] }}</p>
+                    <p class="text-gray-500">Status: {{ project[5] }}</p>
                 </div>
                 </div>
-                <form action="/delete_project/{{ project.project_id }}" method="post">
+                <form action="/delete_project/{{ project[0] }}" method="post">
                     <button type="submit" class="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete Project</button>
                 </form>
             </div>
