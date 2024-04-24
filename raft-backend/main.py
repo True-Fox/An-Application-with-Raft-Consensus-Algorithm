@@ -61,19 +61,40 @@ def log_file_traverse(logs_folder, conn):
             conn.commit()
             cursor.close()
 
+# def extract_queries_from_log(log_file):
+#     queries = []
+#     current_query = ''
+#     for line in log_file:
+#         if line.startswith("Query:"):
+#             current_query = line.lstrip("Query:").strip()
+#         elif line.strip(): 
+#             current_query += line.strip()
+#         else: 
+#             if current_query:
+#                 queries.append(current_query)
+#                 current_query = ''
+#     return queries
+
 def extract_queries_from_log(log_file):
     queries = []
     current_query = ''
-    for line in log_file:
+    # Read the file in reverse
+    for line in reversed(list(log_file)):
         if line.startswith("Query:"):
+            # Found a query line, set it as the current query
             current_query = line.lstrip("Query:").strip()
-        elif line.strip(): 
-            current_query += line.strip()
-        else: 
+            # Stop reading further as we want the first query encountered from the back
+            break
+        elif line.strip():
+            # Non-empty line, prepend it to the current query
+            current_query = line.strip() + current_query
+        else:
+            # Empty line encountered, consider it as the end of a query
             if current_query:
                 queries.append(current_query)
                 current_query = ''
-    return queries
+    return queries[::-1]  # Reverse the list to maintain original order
+
 
 logs_folder = 'logs' 
 log_file_traverse(logs_folder, conn) 
