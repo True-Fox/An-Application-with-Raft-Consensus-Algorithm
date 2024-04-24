@@ -1,4 +1,4 @@
-task-mgmt/
+logs
 .vscode
 __pycache__
 .env

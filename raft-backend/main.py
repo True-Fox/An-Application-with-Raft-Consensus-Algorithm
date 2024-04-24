@@ -2,6 +2,8 @@
 # handle post for nodes other than leader
 
 from pyraft import raft
+import logging
+from logging.handlers import RotatingFileHandler
 from time import sleep
 from flask import Flask, jsonify, render_template, make_response
 import os, json
@@ -36,6 +38,11 @@ def doGet(query:str, fetch_status: str, args:tuple):
         return cursor.fetchone()
     return cursor.fetchall()
     
+logging.basicConfig(filename=f'logs/node_{node.nid}.log',
+                format='%(message)s',
+                level=logging.INFO,
+                filemode='w')
+logger = logging.getLogger()
 
 def start_server(node):
     app.run(host="localhost", port = 5000 + int(node.nid))
@@ -58,29 +65,42 @@ def index():
         if peer.state == 'l':
             print(f"node {nid} is the leader")
     
-    return render_template('peer_info.html', peers=peer_info, node=node)
+    return render_template('peer_info.html', peers=peer_info, node=node)   
+
+@app.route('/api/updateLogs', methods=['POST'])
+def update_logs():
+    data = request.get_json()
+    query = data['query']
+    data_t = tuple(data.values())
+    logger.info("Query: %s, Data: %s", query, data_t[1:])
+    return "Success"
 
 @app.route('/api/post', methods=['POST'])
 def post():
     data = request.get_json()
-    # print("This is the data recieved: ")
-    # print(data)
+    print("This is the data recieved: ")
+    print(data)
     query = data['query']
     data_t = tuple(data.values())
-    # print("Query: ", query)
-    # print("Data:",data_t[1:] )
+    print("Query: ", query)
+    print("Data:",data_t[1:] )
     if node.state == 'l':
         doPost(query,data_t[1:])
+        logger.info("Query: %s, Data: %s", query, data_t[1:])
+        for id, raft_node in node.get_peers().items():
+            if raft_node.state != 'l':
+                url = "http://localhost:" + str(5000+int(id))+"/api/updateLogs"
+                response = requests.post(url=url, json=data)
         return "Success"
     else:
-        # print(node.get_peers())
+        print(node.get_peers())
         for id, raft_node in node.get_peers().items():
-            # print("Id is {}, state: {}".format(id, raft_node.state))
+            print("Id is {}, state: {}".format(id, raft_node.state))
             if raft_node.state == 'l':
                 url = "http://localhost:" + str(5000+int(id))+"/api/post"
-                # print(data)
+                print(data)
                 response = requests.post(url=url, json=data)
-                # print("Response from leader: ", response)
+                print("Response from leader: ", response)
                 return "Success"
         return "Node is not a leader, forward the request to leader"
 
@@ -90,25 +110,23 @@ def get():
     query = data['query']
     fetch_status = data['fetch_status']
     data_t = tuple(data.values())
-    # print(f"Query: {query} \n Data: {data_t[2:]}")
+    print(f"Query: {query} \n Data: {data_t[2:]}")
     if node.state == "l":
         res = doGet(query, fetch_status, data_t[2:])
-        # print(res)
+        print(res)
         if res:
             return jsonify(res)
         return "No Data Available", 500
     else:
-        # print(node.get_peers())
+        print(node.get_peers())
         for id, raft_node in node.get_peers().items():
-            # print("Id is {}, state: {}".format(id, raft_node.state))
+            print("Id is {}, state: {}".format(id, raft_node.state))
             if raft_node.state == 'l':
                 url = "http://localhost:" + str(5000+int(id))+"/api/get"
-                # print(data)
+                print(data)
                 response = requests.get(url=url, json=data)
-                # # print("Response from leader: ", response.text)
-                response_data = response.json()
-                response_tuple = (response_data, 200)
-                return response_tuple
+                print("Response from leader: ", response.text)
+                return response.json()
         return "This node is not a leader.. forwarding request to leader node"
 
 node.worker.handler['on_leader'] = check_lead
