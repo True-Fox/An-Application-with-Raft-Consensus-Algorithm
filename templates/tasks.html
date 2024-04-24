@@ -9,11 +9,11 @@
             <h2 class="text-lg font-bold mb-2">Pending</h2>
             {% for task in pending_tasks %}
             <div class="bg-white rounded-lg p-4 mb-2">
-                <h3 class="font-bold">{{ task.task_name }}</h3>
-                <p>{{ task.task_description }}</p>
-                <p>Due Date: {{ task.due_date }}</p>
-                <p>Priority: {{ task.priority }}</p>
-                <a href="{{ url_for('edit_task', task_id=task.task_id) }}" class="text-blue-500 hover:text-blue-700">Edit Status</a>
+                <h3 class="font-bold">{{ task[2] }}</h3>
+                <p>{{ task[3] }}</p>
+                <p>Due Date: {{ task[4] }}</p>
+                <p>Priority: {{ task[5] }}</p>
+                <a href="{{ url_for('edit_task', task_id=task[0]) }}" class="text-blue-500 hover:text-blue-700">Edit Status</a>
             </div>
             {% endfor %}
         </div>
@@ -21,11 +21,11 @@
             <h2 class="text-lg font-bold mb-2">In Progress</h2>
             {% for task in in_progress_tasks %}
             <div class="bg-white rounded-lg p-4 mb-2">
-                <h3 class="font-bold">{{ task.task_name }}</h3>
-                <p>{{ task.task_description }}</p>
-                <p>Due Date: {{ task.due_date }}</p>
-                <p>Priority: {{ task.priority }}</p>
-                <a href="{{ url_for('edit_task', task_id=task.task_id) }}" class="text-blue-500 hover:text-blue-700">Edit Status</a>
+                <h3 class="font-bold">{{ task[2] }}</h3>
+                <p>{{ task[3] }}</p>
+                <p>Due Date: {{ task[4] }}</p>
+                <p>Priority: {{ task[5] }}</p>
+                <a href="{{ url_for('edit_task', task_id=task[0]) }}" class="text-blue-500 hover:text-blue-700">Edit Status</a>
             </div>
             {% endfor %}
         </div>
@@ -33,11 +33,11 @@
             <h2 class="text-lg font-bold mb-2">In Review</h2>
             {% for task in in_review_tasks %}
             <div class="bg-white rounded-lg p-4 mb-2">
-                <h3 class="font-bold">{{ task.task_name }}</h3>
-                <p>{{ task.task_description }}</p>
-                <p>Due Date: {{ task.due_date }}</p>
-                <p>Priority: {{ task.priority }}</p>
-                <a href="{{ url_for('edit_task', task_id=task.task_id) }}" class="text-blue-500 hover:text-blue-700">Edit Status</a>
+                <h3 class="font-bold">{{ task[2] }}</h3>
+                <p>{{ task[3] }}</p>
+                <p>Due Date: {{ task[4] }}</p>
+                <p>Priority: {{ task[5] }}</p>
+                <a href="{{ url_for('edit_task', task_id=task[0]) }}" class="text-blue-500 hover:text-blue-700">Edit Status</a>
             </div>
             {% endfor %}
         </div>
@@ -45,11 +45,11 @@
             <h2 class="text-lg font-bold mb-2">Completed</h2>
             {% for task in completed_tasks %}
             <div class="bg-white rounded-lg p-4 mb-2">
-                <h3 class="font-bold">{{ task.task_name }}</h3>
-                <p>{{ task.task_description }}</p>
-                <p>Due Date: {{ task.due_date }}</p>
-                <p>Priority: {{ task.priority }}</p>
-                <a href="{{ url_for('edit_task', task_id=task.task_id) }}" class="text-blue-500 hover:text-blue-700">Edit Status</a>
+                <h3 class="font-bold">{{ task[2] }}</h3>
+                <p>{{ task[3] }}</p>
+                <p>Due Date: {{ task[4] }}</p>
+                <p>Priority: {{ task[5] }}</p>
+                <a href="{{ url_for('edit_task', task_id=task[0]) }}" class="text-blue-500 hover:text-blue-700">Edit Status</a>
             </div>
             {% endfor %}
         </div>
