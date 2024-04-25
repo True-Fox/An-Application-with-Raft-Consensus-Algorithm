@@ -132,6 +132,18 @@ def update_logs():
     logger.info("Query: %s, Data: %s", query, data_t[1:])
     return "Success"
 
+@app.route('/api/updateDB', methods=['POST'])
+def updateDB():
+    data = request.get_json()
+    print("This is the data recieved: ")
+    print(data)
+    query = data['query']
+    data_t = tuple(data.values())
+    print("Query: ", query)
+    print("Data:",data_t[1:] )
+    doPost(query, data_t[1:])
+    return "Success"
+
 @app.route('/api/post', methods=['POST'])
 def post():
     data = request.get_json()
@@ -148,6 +160,8 @@ def post():
             if raft_node.state != 'l':
                 url = "http://localhost:" + str(5000+int(id))+"/api/updateLogs"
                 response = requests.post(url=url, json=data)
+                url1 = "http://localhost:" + str(5000+int(id))+"/api/updateDB"
+                response1 = requests.post(url=url1, json=data)
         return "Success"
     else:
         print(node.get_peers())
